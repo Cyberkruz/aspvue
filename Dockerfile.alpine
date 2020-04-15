@@ -1,0 +1,23 @@
+ARG REPO=mcr.microsoft.com/dotnet/core
+ARG REPO_VERSION=3.1-alpine
+ARG PROJECT=AspVue.Web
+
+#Build
+FROM ${REPO}/sdk:${REPO_VERSION} as build
+
+#add nodejs/npm
+RUN apk update && apk add nodejs npm
+
+WORKDIR /app
+COPY src/. .
+RUN dotnet publish -c Release /p:PublishTrimmed=true --self-contained -o publish -r linux-musl-x64
+
+# Runtime
+FROM ${REPO}/aspnet:${REPO_VERSION} as runtime
+
+WORKDIR /app
+COPY --from=build /app/publish/. .
+
+EXPOSE 80
+
+CMD [ "dotnet", "AspVue.Web.dll" ]
