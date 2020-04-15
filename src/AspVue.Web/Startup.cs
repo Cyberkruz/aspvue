@@ -43,6 +43,7 @@ namespace AspVue.Web
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseDefaultFiles();
             app.UseSpaStaticFiles();
 
             app.UseRouting();
